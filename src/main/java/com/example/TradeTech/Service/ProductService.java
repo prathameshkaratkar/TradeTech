@@ -1,5 +1,6 @@
 package com.example.TradeTech.Service;
 
+import com.example.TradeTech.Exceptions.ResourceNotFoundException;
 import com.example.TradeTech.Model.Product;
 import com.example.TradeTech.Repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +15,38 @@ public class ProductService {
     ProductRepository productRepository;
 
     public List<Product> getAll() {
-        return productRepository.findAll();
+        try {
+            return productRepository.findAll();
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Failed to fetch products",e);
+        }
     }
 
-    public Optional<Product> getById(Long id) {
-        return productRepository.findById(id);
+    public Product getById(Long id) {
+        try {
+            return productRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Failed to fetch products",e);
+        }
     }
 
     public Product save(Product product) {
-        return productRepository.save(product);
+        try {
+            return productRepository.save(product);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Failed to save product",e);
+        }
     }
 
     public void delete(Long id) {
-        productRepository.deleteById(id);
+        try {
+            if(!productRepository.existsById(id)) {
+                throw new ResourceNotFoundException("Product not found with id: " + id);
+            }
+            productRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete product",e);
+        }
     }
 }
