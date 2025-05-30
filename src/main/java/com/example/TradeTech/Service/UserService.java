@@ -9,9 +9,7 @@ import com.example.TradeTech.dto.RegisterDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.ReadOnlyFileSystemException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -72,6 +70,20 @@ public class UserService {
             userRepository.deleteById(id);
         } catch (RuntimeException e) {
             throw new RuntimeException("Failed to delete user",e);
+        }
+    }
+
+    public User updateUser(Long id,RegisterDTO dto) {
+        try {
+            User existing = userRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("user is not found with id: " + id));
+
+            existing.setName(dto.name);
+            existing.setEmail(dto.email);
+            existing.setPassword(dto.password);
+            return userRepository.save(existing);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update user",e);
         }
     }
 }
