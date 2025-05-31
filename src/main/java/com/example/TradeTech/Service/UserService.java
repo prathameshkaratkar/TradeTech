@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -17,6 +18,10 @@ public class UserService {
     private UserRepository userRepository;
 
     public User register(RegisterDTO dto) {
+        Optional<User> existingUser = userRepository.findByEmail(dto.email);
+        if(existingUser.isPresent()) {
+            throw new IllegalArgumentException("Email already in use");
+        }
         try{
             User user = new User();
             user.setName(dto.name);
@@ -77,6 +82,11 @@ public class UserService {
         try {
             User existing = userRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("user is not found with id: " + id));
+
+            Optional<User> userWithEmail = userRepository.findByEmail(dto.email);
+            if(userWithEmail.isPresent() && !userWithEmail.get().getId().equals(id)) {
+                throw new IllegalArgumentException("Email already in use by another user");
+            }
 
             existing.setName(dto.name);
             existing.setEmail(dto.email);

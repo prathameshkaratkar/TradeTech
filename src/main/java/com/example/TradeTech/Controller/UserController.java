@@ -4,6 +4,7 @@ import com.example.TradeTech.Model.User;
 import com.example.TradeTech.Service.UserService;
 import com.example.TradeTech.dto.LoginDTO;
 import com.example.TradeTech.dto.RegisterDTO;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterDTO dto) {
+    public ResponseEntity<User> register(@Valid @RequestBody RegisterDTO dto) {
         try {
             return ResponseEntity.ok(userService.register(dto));
         } catch(Exception e) {
@@ -27,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginDTO dto) {
+    public ResponseEntity<User> login(@Valid @RequestBody LoginDTO dto) {
         try {
             return ResponseEntity.ok(userService.login(dto));
         } catch(Exception e) {
@@ -64,7 +65,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id,@RequestBody RegisterDTO dto) {
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody RegisterDTO dto) {
         try {
             return ResponseEntity.ok(userService.updateUser(id,dto));
         } catch (Exception e) {
