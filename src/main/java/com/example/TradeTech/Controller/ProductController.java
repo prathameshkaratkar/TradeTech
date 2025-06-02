@@ -50,6 +50,7 @@ public class ProductController {
             existing.setName(updatedProduct.getName());
             existing.setDescription(updatedProduct.getDescription());
             existing.setPrice(updatedProduct.getPrice());
+            existing.setCategory(updatedProduct.getCategory());
             return ResponseEntity.ok(productService.save(existing));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -1,7 +1,9 @@
 package com.example.TradeTech.Service;
 
 import com.example.TradeTech.Exceptions.ResourceNotFoundException;
+import com.example.TradeTech.Model.Category;
 import com.example.TradeTech.Model.Product;
+import com.example.TradeTech.Repository.CategoryRepository;
 import com.example.TradeTech.Repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,8 @@ import java.util.Optional;
 public class ProductService {
     @Autowired
     ProductRepository productRepository;
+    @Autowired
+    CategoryRepository categoryRepository;
 
     public List<Product> getAll() {
         try {
@@ -33,8 +37,13 @@ public class ProductService {
 
     public Product save(Product product) {
         try {
+            if(product.getCategory() != null && product.getCategory().getId() != null) {
+                Category category = categoryRepository.findById(product.getCategory().getId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: "+ product.getCategory().getId()));
+                product.setCategory(category);
+            }
             return productRepository.save(product);
-        } catch (RuntimeException e) {
+        } catch(RuntimeException e) {
             throw new RuntimeException("Failed to save product",e);
         }
     }
